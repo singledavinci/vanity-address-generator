@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanity Address Generator - SOL & ETH</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #856404;
+        }
+
+        .progress-section {
+            display: none;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .result-section {
+            display: none;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .result-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .security-warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            color: #721c24;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔑 Vanity Address Generator</h1>
+        <p class="subtitle">Generate custom Solana & Ethereum addresses</p>
+
+        <!-- Configuration Card -->
+        <div class="card">
+            <h2 class="section-title">⚙️ Configuration</h2>
+
+            <div class="warning">
+                <strong>⚠️ Difficulty Warning:</strong> Longer patterns take exponentially longer to generate.
+                1-2 characters = seconds, 3 characters = minutes, 4+ characters = hours/days.
+            </div>
+
+            <div class="form-group">
+                <label>Select Blockchain</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="chain" value="solana" checked>
+                        <span>Solana (SOL)</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="chain" value="ethereum">
+                        <span>Ethereum (ETH)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Pattern Position</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="position" value="prefix" checked>
+                        <span>Prefix (starts with)</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="position" value="suffix">
+                        <span>Suffix (ends with)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="pattern">Pattern (1-5 characters recommended)</label>
+                <input type="text" id="pattern" placeholder="e.g., Ab123" maxlength="8">
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    Solana: Base58 (no 0, O, I, l) | Ethereum: Hex (0-9, a-f)
+                </small>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="caseSensitive">
+                        <span>Case Sensitive</span>
+                    </label>
+                </div>
+            </div>
+
+            <button id="generateBtn" onclick="startGeneration()">
+                🚀 Start Generation
+            </button>
+        </div>
+
+        <!-- Progress Card -->
+        <div class="card progress-section" id="progressSection">
+            <h2 class="section-title">📊 Progress</h2>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Workers</div>
+                    <div class="stat-value" id="workers">4</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Attempts</div>
+                    <div class="stat-value" id="attempts">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Speed</div>
+                    <div class="stat-value" id="speed">0/s</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Elapsed</div>
+                    <div class="stat-value" id="elapsed">0s</div>
+                </div>
+            </div>
+
+            <button id="stopBtn" onclick="stopGeneration()" style="background: #dc3545;">
+                ⏹️ Stop Generation
+            </button>
+        </div>
+
+        <!-- Results Card -->
+        <div class="card result-section" id="resultSection">
+            <h2 class="section-title">✅ Address Found!</h2>
+
+            <div class="result-item">
+                <div class="result-label">Public Address</div>
+                <div class="result-value">
+                    <span id="resultAddress"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('resultAddress')">Copy</button>
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Private Key</div>
+                <div class="result-value">
+                    <span id="resultPrivateKey"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('resultPrivateKey')">Copy</button>
+                </div>
+            </div>
+
+            <div class="result-item" id="seedPhraseSection" style="display: none;">
+                <div class="result-label">Seed Phrase (Mnemonic)</div>
+                <div class="result-value">
+                    <span id="resultSeedPhrase"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('resultSeedPhrase')">Copy</button>
+                </div>
+            </div>
+
+            <div class="security-warning">
+                <strong>🔒 Security Warning:</strong> Never share your private key or seed phrase with anyone!
+                Store it securely offline. Anyone with this information can access your funds.
+            </div>
+
+            <button onclick="resetGeneration()" style="margin-top: 20px;">
+                🔄 Generate Another
+            </button>
+        </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
