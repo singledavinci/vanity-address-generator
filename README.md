@@ -2,6 +2,14 @@
 
 Generate custom Solana and Ethereum addresses with your desired prefix or suffix patterns.
 
+## 🌐 Live Demo
+
+**Try it now**: [https://singledavinci.github.io/vanity-address-generator/](https://singledavinci.github.io/vanity-address-generator/)
+
+![Vanity Address Generator Demo](demo.png)
+
+*Generating custom addresses at ~68,000 attempts per second*
+
 ## 🚀 Features
 
 - **Dual Blockchain Support**: Generate vanity addresses for both Solana (SOL) and Ethereum (ETH)
